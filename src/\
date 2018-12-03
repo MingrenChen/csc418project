@@ -1,0 +1,49 @@
+// Create a bumpy surface by using procedural noise to generate a height (
+// displacement in normal direction).
+//
+// Inputs:
+//   is_moon  whether we're looking at the moon or centre planet
+//   s  3D position of seed for noise generation
+// Returns elevation adjust along normal (values between -0.1 and 0.1 are
+//   reasonable.
+float bump_height( bool is_moon, vec3 s)
+{
+  /////////////////////////////////////////////////////////////////////////////
+  // Replace with your code
+  float sum = 0.5;
+  float size = 2;
+  float scale = size;
+  while (scale >= 0.128) {
+     sum += improved_perlin_noise(s / scale) * scale;
+     scale /= 2.0;
+   }
+  float noise = 0.5 + 0.5 * sin(4 * M_PI * (s.x + 3 * sum));
+  // float noise = 0.5 + 0.5 * (s.x + 2 * sum);
+  noise = (noise * noise - 0.5) * 0.01;
+
+  float h = noise * 1.2;
+  if (is_moon) {
+    h = noise;
+  }
+  // return h;
+
+  // float noise = 30 * improved_perlin_noise(0.5 * s + 0.3 * s.x) + 0.77 * improved_perlin_noise(0.5 * s + 0.54 * s.y) + 2 * improved_perlin_noise(0.5 * s + 1.9 * s.z);
+  // float h = 0.5 + 2.3 * noise;
+  // return h;
+
+  // float noise;
+  // vec3 f = vec3(0.8, 10, 10);
+  // vec3 a = vec3(100, 10, 1);
+  // a = a / (a.x + a.y + a.z);
+  // if (is_moon) {
+  //   f = vec3(3, 6, 0.5);
+  //   s = s + 10;
+  //   a = vec3(5, 0, 10);
+  // }
+
+  noise = 0.1 * s.x * improved_perlin_noise(s * 0.34) + 2 * s.y * improved_perlin_noise(s * 2) + 20 * s.z * improved_perlin_noise(s * 5);
+  // float height = smooth_heaviside(noise + 0.5, 30) * 0.8;
+  float height = (smooth_heaviside(noise * 0.01 + 0.2, 45.0)) * 1.2;
+  return height;
+  /////////////////////////////////////////////////////////////////////////////
+}
